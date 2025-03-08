@@ -1,6 +1,6 @@
 use axum::handler::HandlerWithoutStateExt;
 use axum::http::StatusCode;
-use axum::routing::{any_service, MethodRouter};
+use axum::routing::{MethodRouter, any_service};
 use tower_http::services::ServeDir;
 
 // Note: Here we can just return a MethodRouter rather than a full Router
@@ -10,8 +10,5 @@ pub fn serve_dir(web_folder: &'static String) -> MethodRouter {
         (StatusCode::NOT_FOUND, "Resource not found.")
     }
 
-    any_service(
-        ServeDir::new(web_folder)
-            .not_found_service(handle_404.into_service()),
-    )
+    any_service(ServeDir::new(web_folder).not_found_service(handle_404.into_service()))
 }
