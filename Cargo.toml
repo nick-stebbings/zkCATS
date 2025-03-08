@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+members = [
+    # -- Application Libraries
+    "crates/lib/lib-core",       # e.g., model, ctx, config.
+    "crates/lib/lib-web",  
+]
+
+[workspace.dependencies]
+axum = "0.8.1"
+sqlx = { version = "0.8", features = [ "macros", "runtime-tokio", "postgres", "uuid" ] }
