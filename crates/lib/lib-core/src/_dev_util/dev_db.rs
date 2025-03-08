@@ -5,6 +5,9 @@ use std::path::{Path, PathBuf};
 use std::time::Duration;
 use tracing::info;
 
+use crate::ctx::Ctx;
+use crate::model::ModelManager;
+
 type Db = Pool<Postgres>;
 
 // NOTE: Hardcode to prevent deployed system db update.
@@ -59,7 +62,6 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
 
     // -- Init model layer.
     let mm = ModelManager::new().await?;
-    let db = mm.db();
     // let ctx = Ctx::root_ctx();
     //
     // // -- Set demo1 pwd

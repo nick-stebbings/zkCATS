@@ -22,3 +22,4 @@ serde = { version = "1.0.218", features = ["derive"] }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 derive_more = {version = "2.0.1", features = ["from", "display"] }
+serde_with = { version = "3.12.0" }

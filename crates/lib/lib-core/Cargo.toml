@@ -6,9 +6,10 @@ edition = "2024"
 [dependencies]
 serde = { workspace = true }
 tracing = { workspace = true }
-lib_util = { workspace = true }
 sqlx = { workspace = true }
 tokio = { workspace = true }
+serde_with = { workspace = true }
+lib-util = { path = "../lib-util"}
 
 [lints]
 workspace = true

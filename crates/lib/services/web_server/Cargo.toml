@@ -15,11 +15,11 @@ lib-core = { path = "../../lib-core"}
 lib-web = { path = "../../lib-web"}
 # -- Async
 tokio = { workspace = true }
-tracing = { workspace = true }
-derive_more = { workspace = true }
-tracing-subscriber = { workspace = true }
 axum = { workspace = true }
 
+derive_more = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing = { workspace = true }
 httpc-test = "0.1.10"
 
 [lints]
