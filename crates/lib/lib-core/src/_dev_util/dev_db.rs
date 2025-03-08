@@ -1,8 +1,8 @@
+use sqlx::postgres::PgPoolOptions;
+use sqlx::{Pool, Postgres};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::time::Duration;
-use sqlx::{Pool, Postgres};
-use sqlx::postgres::PgPoolOptions;
 use tracing::info;
 
 type Db = Pool<Postgres>;
@@ -52,9 +52,7 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
     for path in paths {
         let path_str = path.to_string_lossy();
 
-        if path_str.ends_with(".sql")
-            && !path_str.ends_with(SQL_RECREATE_DB_FILE_NAME)
-        {
+        if path_str.ends_with(".sql") && !path_str.ends_with(SQL_RECREATE_DB_FILE_NAME) {
             pexec(&app_db, &path).await?;
         }
     }

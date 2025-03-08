@@ -1,6 +1,6 @@
+use crate::ctx::Error;
 use tokio::sync::OnceCell;
 use tracing::info;
-use crate::ctx::Error;
 
 mod dev_db;
 
@@ -11,5 +11,6 @@ pub async fn init_dev() {
         info!("{:<12} - init dev_all", "FOR_DEV_ONLY");
 
         dev_db::init_dev_db().await.unwrap()
-   }).await;
+    })
+    .await;
 }
