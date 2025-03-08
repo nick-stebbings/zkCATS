@@ -3,6 +3,9 @@
 # Scope down tracing, to filter out external lib tracing.
 RUST_LOG="web_server=debug,lib_web=debug,services=debug"
 
+
+## -- ConfigMap
+
 # This will be relative to Cargo.toml
 # In deployed images, probably use absolute path.
-SERVICE_WEB_FOLDER="web"
+SERVICE_WEB_FOLDER="web/"

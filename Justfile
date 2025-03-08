@@ -35,7 +35,7 @@ dev-watch:
     echo "Starting web server with watching..."
     # Use multiple terminals or a terminal multiplexer like tmux for this
     # This particular command should be run in a separate terminal
-    cargo watch -q -c -w crates/lib/services/web_server/src/ -x "run -p web_server"
+    cargo watch -q -c -w .cargo -w crates/lib/services/web_server/src/ -x "run -p web_server"
 
 
 # Initialize the database using Docker

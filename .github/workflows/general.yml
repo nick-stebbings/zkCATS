@@ -151,6 +151,13 @@ jobs:
           --no-default-features
           --locked
       - name: Migrate database
-        run: SKIP_DOCKER=true ./scripts/init_db.sh
+        run: |
+          SKIP_DOCKER=true \
+          DB_HOST=localhost \
+          DB_PORT=5432 \
+          DB_USER=postgres \
+          DB_PASSWORD=password \
+          DB_NAME=postgres \
+          ./scripts/init_db.sh
       - name: Generate code coverage
         run: cargo install cargo-tarpaulin && cargo tarpaulin --verbose --workspace

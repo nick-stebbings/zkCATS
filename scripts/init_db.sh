@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
 if ! [ -x "$(command -v psql)" ]; then
-echo >&2 "Error: psql is not installed."
-exit 1
+  echo >&2 "Error: psql is not installed."
+  exit 1
 fi
 if ! [ -x "$(command -v sqlx)" ]; then
-echo >&2 "Error: sqlx is not installed."
-echo >&2 "Use:"
-echo >&2 " cargo install --version='~0.7' sqlx-cli \
+  echo >&2 "Error: sqlx is not installed."
+  echo >&2 "Use:"
+  echo >&2 " cargo install --version='~0.7' sqlx-cli \
 --no-default-features --features rustls,postgres"
-echo >&2 "to install it."
+  echo >&2 "to install it."
   exit 1
 fi
 
@@ -17,7 +17,12 @@ fi
 set -x
 set -eo pipefail
 
+# Default settings
+DB_HOST="${DB_HOST:=localhost}"
 DB_PORT="${DB_PORT:=5432}"
+DB_USER="${DB_USER:=postgres}"
+DB_PASSWORD="${DB_PASSWORD:=password}"
+DB_NAME="${DB_NAME:=postgres}"
 SUPERUSER="${SUPERUSER:=postgres}"
 SUPERUSER_PWD="${SUPERUSER_PWD:=welcome}"
 APP_USER="${APP_USER:=app}"
@@ -63,14 +68,25 @@ then
   # Grant create db privileges to the app user
   GRANT_QUERY="ALTER USER ${APP_USER} CREATEDB;"
   docker exec -it "${CONTAINER_NAME}" psql -U "${SUPERUSER}" -c "${GRANT_QUERY}"
+
+  # In this case we're running in docker, so let's use APP_USER for DB_USER later
+  DB_USER="${APP_USER}"
+  DB_PASSWORD="${APP_USER_PWD}"
+  DB_NAME="${APP_DB_NAME}"
+else
+  # We're skipping docker, so we need to ensure the DB variables are set
+  # In CI, these should match the GitHub Actions postgres service settings
+  echo "Using existing PostgreSQL instance at ${DB_HOST}:${DB_PORT}"
 fi
 
->&2 echo "Postgres is up and running on port ${DB_PORT} - running migrations now!"
+# Debug info - print connection details
+echo "Connecting with: host=${DB_HOST}, port=${DB_PORT}, user=${DB_USER}, db=${DB_NAME}"
+
 # Keep pinging Postgres until it's ready to accept commands
 export PGPASSWORD="${DB_PASSWORD}"
 until psql -h "${DB_HOST}" -U "${DB_USER}" -p "${DB_PORT}" -d "postgres" -c '\q'; do
->&2 echo "Postgres is still unavailable - sleeping"
-sleep 1
+  >&2 echo "Postgres is still unavailable - sleeping"
+  sleep 1
 done
 >&2 echo "Postgres is up and running on port ${DB_PORT}!"
 
