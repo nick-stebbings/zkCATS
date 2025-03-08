@@ -8,12 +8,12 @@ pub use self::error::{Error, Result};
 
 #[derive(Clone, Debug)]
 pub struct Ctx {
-	user_id: i64,
+    user_id: i64,
 }
 
 // Property Accessors.
 impl Ctx {
-	pub fn user_id(&self) -> i64 {
-		self.user_id
-	}
+    pub fn user_id(&self) -> i64 {
+        self.user_id
+    }
 }

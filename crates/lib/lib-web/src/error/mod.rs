@@ -1,13 +1,12 @@
-use std::sync::Arc;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
-use serde::Serialize;
 use derive_more::From;
+use serde::Serialize;
+use std::sync::Arc;
 use tracing::debug;
 
 pub type Result<T> = core::result::Result<T, Error>;
 pub type ClientError = Box<dyn std::error::Error>; // For early dev.
-
 
 #[derive(Debug, Serialize, From, strum_macros::AsRefStr)]
 #[serde(tag = "type", content = "data")]
@@ -35,10 +34,7 @@ impl IntoResponse for Error {
 
 // region:    --- Error Boilerplate
 impl core::fmt::Display for Error {
-    fn fmt(
-        &self,
-        fmt: &mut core::fmt::Formatter,
-    ) -> core::result::Result<(), core::fmt::Error> {
+    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::result::Result<(), core::fmt::Error> {
         write!(fmt, "{self:?}")
     }
 }

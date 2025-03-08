@@ -1,0 +1,26 @@
+[package]
+name = "web_server"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "web_server"
+path = "src/main.rs"
+
+[dependencies]
+
+# -- App Libs
+lib-util = { path = "../../lib-util"}
+lib-core = { path = "../../lib-core"}
+lib-web = { path = "../../lib-web"}
+# -- Async
+tokio = { workspace = true }
+tracing = { workspace = true }
+derive_more = { workspace = true }
+tracing-subscriber = { workspace = true }
+axum = { workspace = true }
+
+httpc-test = "0.1.10"
+
+[lints]
+workspace = true

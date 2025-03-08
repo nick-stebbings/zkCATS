@@ -16,8 +16,7 @@ pub fn now_utc_plus_sec_str(sec: f64) -> String {
 }
 
 pub fn parse_utc(moment: &str) -> Result<OffsetDateTime> {
-    OffsetDateTime::parse(moment, &Rfc3339)
-        .map_err(|_| Error::FailToDateParse(moment.to_string()))
+    OffsetDateTime::parse(moment, &Rfc3339).map_err(|_| Error::FailToDateParse(moment.to_string()))
 }
 
 // region:    --- Error
@@ -31,10 +30,7 @@ pub enum Error {
 
 // region:    --- Error Boilerplate
 impl core::fmt::Display for Error {
-    fn fmt(
-        &self,
-        fmt: &mut core::fmt::Formatter,
-    ) -> core::result::Result<(), core::fmt::Error> {
+    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::result::Result<(), core::fmt::Error> {
         write!(fmt, "{self:?}")
     }
 }

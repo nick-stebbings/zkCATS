@@ -1,17 +1,24 @@
+[workspace.lints.rust]
+unsafe_code = "forbid"
+unused = { level = "allow", priority = -1 } # For exploratory dev.
+
 [workspace]
 resolver = "2"
 members = [
     "crates/lib/lib-util",
     # -- Application Libraries
     "crates/lib/lib-core",       # e.g., model, ctx, config.
-    "crates/lib/lib-web",  
+    "crates/lib/lib-web",
+    "crates/lib/services/web_server",
 ]
 
 [workspace.dependencies]
 axum = "0.8.1"
 sqlx = { version = "0.8", features = [ "macros", "runtime-tokio", "postgres", "uuid" ] }
 time = {version = "0.3", features = ["formatting", "parsing", "serde"]}
-
+tokio = { version =  "1.44.0", features = ["full"] }
+tower-http = { version = "0.6", features = ["fs"] }
 serde = { version = "1.0.218", features = ["derive"] }
 tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 derive_more = {version = "2.0.1", features = ["from", "display"] }
