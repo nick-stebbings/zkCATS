@@ -56,7 +56,16 @@ then
     >&2 echo "Postgres is still unavailable - sleeping"
     sleep 1
   done
+  # Create the application user
+  CREATE_QUERY="CREATE USER ${APP_USER} WITH PASSWORD '${APP_USER_PWD}';"
+  docker exec -it "${CONTAINER_NAME}" psql -U "${SUPERUSER}" -c "${CREATE_QUERY}"
 
+  # Grant create db privileges to the app user
+  GRANT_QUERY="ALTER USER ${APP_USER} CREATEDB;"
+  docker exec -it "${CONTAINER_NAME}" psql -U "${SUPERUSER}" -c "${GRANT_QUERY}"
+fi
+
+>&2 echo "Postgres is up and running on port ${DB_PORT} - running migrations now!"
 # Keep pinging Postgres until it's ready to accept commands
 export PGPASSWORD="${DB_PASSWORD}"
 until psql -h "${DB_HOST}" -U "${DB_USER}" -p "${DB_PORT}" -d "postgres" -c '\q'; do

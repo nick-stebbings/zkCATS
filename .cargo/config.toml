@@ -1,7 +1,7 @@
 [env]
 
 # Scope down tracing, to filter out external lib tracing.
-RUST_LOG="web_server=debug,lib_web=debug"
+RUST_LOG="web_server=debug,lib_web=debug,services=debug"
 
 # This will be relative to Cargo.toml
 # In deployed images, probably use absolute path.
