@@ -21,7 +21,7 @@ set -eo pipefail
 DB_HOST="${DB_HOST:=localhost}"
 DB_PORT="${DB_PORT:=5432}"
 
-  SUPERUSER="${SUPERUSER:=postgres}"
+SUPERUSER="${SUPERUSER:=postgres}"
 SUPERUSER_PWD="${SUPERUSER_PWD:=welcome}"
 DB_USER="${DB_USER:=postgres}"
 DB_PASSWORD="${DB_PASSWORD:=welcome}"

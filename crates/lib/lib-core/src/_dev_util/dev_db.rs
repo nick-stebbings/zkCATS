@@ -58,7 +58,8 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // -- Init model layer.
-    // let mm = ModelManager::new().await?;
+    let mm = ModelManager::new().await?;
+    let db = mm.db();
     // let ctx = Ctx::root_ctx();
     //
     // // -- Set demo1 pwd
