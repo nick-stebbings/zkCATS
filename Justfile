@@ -42,6 +42,10 @@ dev-watch:
 init-db:
     ./scripts/init_db.sh
 
+# Initialize psql terminal
+term-db:
+    docker exec -it -u postgres pg psql
+
 # Run the web server specifically
 run-ws:
     cargo run -p web_server --bin web_server

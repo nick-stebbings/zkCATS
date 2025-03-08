@@ -11,7 +11,7 @@ path = "src/main.rs"
 
 # -- App Libs
 lib-util = { path = "../../lib-util"}
-#lib-core = { path = "../../lib-core"}
+lib-core = { path = "../../lib-core"}
 lib-web = { path = "../../lib-web"}
 # -- Async
 tokio = { workspace = true }

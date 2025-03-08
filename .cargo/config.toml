@@ -1,7 +1,7 @@
 [env]
 
 # Scope down tracing, to filter out external lib tracing.
-RUST_LOG="web_server=debug,lib_web=debug,services=debug"
+RUST_LOG="web_server=debug,lib_web=debug,lib_core=debug,services=debug"
 
 
 ## -- ConfigMap

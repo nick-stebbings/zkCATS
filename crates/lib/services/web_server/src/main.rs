@@ -25,6 +25,7 @@ use crate::config::web_config;
 use lib_web::routes::routes_static;
 use tracing::info;
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
+use lib_core::_dev_util;
 // endregion: --- Modules
 
 #[tokio::main]
@@ -38,8 +39,9 @@ async fn main() -> Result<()> {
         .route("/", get(|| async { "Hello, World!" }))
         .fallback_service(routes_static::serve_dir(&web_config().WEB_FOLDER));
 
-    let listener = TcpListener::bind("127.0.0.1:8080").await?;
+    let _db = _dev_util::init_dev().await;
 
+    let listener = TcpListener::bind("127.0.0.1:8080").await?;
     info!("{:<12} - {:?}\n", "LISTENING", listener.local_addr());
 
     axum::serve(listener, router.into_make_service())
