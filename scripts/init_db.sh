@@ -21,7 +21,7 @@ set -eo pipefail
 DB_HOST="${DB_HOST:=localhost}"
 DB_PORT="${DB_PORT:=5432}"
 DB_USER="${DB_USER:=postgres}"
-DB_PASSWORD="${DB_PASSWORD:=password}"
+DB_PASSWORD="${DB_PASSWORD:=welcome}"
 DB_NAME="${DB_NAME:=postgres}"
 SUPERUSER="${SUPERUSER:=postgres}"
 SUPERUSER_PWD="${SUPERUSER_PWD:=welcome}"
@@ -36,7 +36,7 @@ then
   RUNNING_POSTGRES_CONTAINER=$(docker ps --filter 'name=postgres' --format '{{.ID}}')
   if [[ -n $RUNNING_POSTGRES_CONTAINER ]]; then
     echo >&2 "there is a postgres container already running, kill it with"
-    echo >&2 "    docker kill ${RUNNING_POSTGRES_CONTAINER}"
+    echo >&2 "    docker stop ${RUNNING_POSTGRES_CONTAINER}"
     exit 1
   fi
   CONTAINER_NAME="postgres_$(date '+%s')"
@@ -90,8 +90,18 @@ until psql -h "${DB_HOST}" -U "${DB_USER}" -p "${DB_PORT}" -d "postgres" -c '\q'
 done
 >&2 echo "Postgres is up and running on port ${DB_PORT}!"
 
+
 DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
-export DATABASE_URL
-sqlx database create
-sqlx migrate run
+MIGRATIONS_PATH="sql/dev_initial"
+
+# Run migrations
+if [ -d "${MIGRATIONS_PATH}" ]; then
+  echo "Running migrations from ${MIGRATIONS_PATH}..."
+  sqlx migrate run --source "${MIGRATIONS_PATH}" --database-url "${DATABASE_URL}"
+  echo "Migrations complete!"
+else
+  echo "Error: Could not find migrations directory. Please set MIGRATIONS_PATH to the correct location."
+  exit 1
+fi
+
 >&2 echo "Postgres has been migrated, ready to go!"
