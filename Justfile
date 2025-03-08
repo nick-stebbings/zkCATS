@@ -86,6 +86,11 @@ format:
 clean:
     cargo clean
 
+# Clean docker containers
+docker-clean:
+    docker stop pg
+    docker rm pg
+
 # Generate documentation
 docs:
     cargo doc --open
