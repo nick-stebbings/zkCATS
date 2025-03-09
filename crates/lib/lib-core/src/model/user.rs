@@ -56,11 +56,77 @@ impl UserBy for UserForAuth {}
 struct UserBmc;
 
 impl DbBmc for UserBmc {
-    const TABLE: &'static str = "user";
+    const TABLE: &'static str = "app_user";
 }
 
 impl UserBmc {
-    pub fn get_first_by_username(username: &str) -> Result<Option<User>> {
-        Ok(None)
+    pub async fn get<E>(ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<E>
+    where
+        E: UserBy,
+    {
+        base::get::<Self, _>(ctx, mm, id).await
+    }
+
+    pub async fn get_first_by_username<E>(
+        ctx: &Ctx,
+        mm: &ModelManager,
+        username: &str,
+    ) -> Result<Option<User>> {
+        let db = mm.db();
+        let sql = format!("SELECT * from {} WHERE username LIKE $1", Self::TABLE);
+        let user = sqlx::query_as::<_, User>(&sql)
+            .bind(username)
+            .fetch_one(db)
+            .await?;
+
+        Ok(Some(user))
     }
 }
+
+// region:    --- Tests
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use anyhow::{Context, Result};
+
+    use crate::_dev_util;
+    use serial_test::serial;
+
+    #[tokio::test]
+    #[serial]
+    async fn test_first_ok_demo1() -> Result<()> {
+        // S
+        let mm = &_dev_util::init_test().await;
+        let ctx = &Ctx::root_ctx();
+        let db = mm.db();
+        let fx_username = "demo1";
+
+        // E
+        let res: User = UserBmc::get_first_by_username::<User>(ctx, mm, fx_username)
+            .await?
+            .context("Should have user demo1")?;
+
+        // A
+        assert_eq!(fx_username, res.username);
+
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn test_first_ok_demo2() -> Result<()> {
+        // S
+        let mm = &_dev_util::init_test().await;
+        let ctx = &Ctx::root_ctx();
+        let db = mm.db();
+        let fx_id = 1000;
+
+        // E
+        let res: User = UserBmc::get::<User>(ctx, mm, fx_id).await?;
+
+        Ok(())
+    }
+}
+
+// endregion: --- Tests
