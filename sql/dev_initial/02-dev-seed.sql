@@ -1,1 +1,1 @@
-INSERT INTO "user" (username) VALUES ('demo1');
+INSERT INTO "app_user" (username) VALUES ('demo1');
