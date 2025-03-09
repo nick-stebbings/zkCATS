@@ -67,7 +67,7 @@ impl UserBmc {
         base::get::<Self, _>(ctx, mm, id).await
     }
 
-    pub async fn get_first_by_username<E>(
+    pub async fn get_first_by_username(
         ctx: &Ctx,
         mm: &ModelManager,
         username: &str,
@@ -103,7 +103,7 @@ mod tests {
         let fx_username = "demo1";
 
         // E
-        let res: User = UserBmc::get_first_by_username::<User>(ctx, mm, fx_username)
+        let res: User = UserBmc::get_first_by_username(ctx, mm, fx_username)
             .await?
             .context("Should have user demo1")?;
 

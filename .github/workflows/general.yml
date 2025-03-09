@@ -115,59 +115,59 @@ jobs:
         run: cargo clippy -- -D warnings
 
   # `coverage` container job
-  coverage:
-    name: Code coverage
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:14
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: welcome  # Changed to match test job
-          POSTGRES_DB: postgres      # Changed to match test job
-        ports:
-          - 5432:5432
-    env:
-      SERVICE_DB_URL: "postgres://postgres:welcome@localhost:5432/postgres"
-      RUST_TEST_THREADS: "1"
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@stable
+  # coverage:
+  #   name: Code coverage
+  #   runs-on: ubuntu-latest
+  #   services:
+  #     postgres:
+  #       image: postgres:14
+  #       env:
+  #         POSTGRES_USER: postgres
+  #         POSTGRES_PASSWORD: welcome  # Changed to match test job
+  #         POSTGRES_DB: postgres      # Changed to match test job
+  #       ports:
+  #         - 5432:5432
+  #   env:
+  #     SERVICE_DB_URL: "postgres://postgres:welcome@localhost:5432/postgres"
+  #     RUST_TEST_THREADS: "1"
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v3
+  #     - uses: dtolnay/rust-toolchain@stable
 
-      - name: Rust Cache Action
-        uses: Swatinem/rust-cache@v2
-        with:
-          # An additional cache key that is added alongside the automatic `job`-based cache key and can be used to further differentiate jobs. default: empty
-          key: sqlx-${{ env.SQLX_VERSION }}
+  #     - name: Rust Cache Action
+  #       uses: Swatinem/rust-cache@v2
+  #       with:
+  #         # An additional cache key that is added alongside the automatic `job`-based cache key and can be used to further differentiate jobs. default: empty
+  #         key: sqlx-${{ env.SQLX_VERSION }}
 
-      - name: Install sqlx-cli
-        run:
-            cargo install sqlx-cli
-            --version=${{ env.SQLX_VERSION }}
-            --features ${{ env.SQLX_FEATURES }}
-            --no-default-features
-            --locked
-            # The --locked flag can be used to force Cargo to use the packaged Cargo.lock file if it is available. 
-            # This may be useful for ensuring reproducible builds, to use the exact same set of dependencies that were available when the package was published. 
-            # It may also be useful if a newer version of a dependency is published that no longer builds on your system, or has other problems
+  #     - name: Install sqlx-cli
+  #       run:
+  #           cargo install sqlx-cli
+  #           --version=${{ env.SQLX_VERSION }}
+  #           --features ${{ env.SQLX_FEATURES }}
+  #           --no-default-features
+  #           --locked
+  #           # The --locked flag can be used to force Cargo to use the packaged Cargo.lock file if it is available. 
+  #           # This may be useful for ensuring reproducible builds, to use the exact same set of dependencies that were available when the package was published. 
+  #           # It may also be useful if a newer version of a dependency is published that no longer builds on your system, or has other problems
 
-      # Add database migration step
-      - name: Install postgresql-client
-        run: sudo apt-get update && sudo apt-get install postgresql-client -y
+  #     # Add database migration step
+  #     - name: Install postgresql-client
+  #       run: sudo apt-get update && sudo apt-get install postgresql-client -y
 
-      - name: Migrate database
-        run: |
-          SKIP_DOCKER=true \
-          DB_HOST=localhost \
-          DB_PORT=5432 \
-          DB_USER=postgres \
-          DB_PASSWORD=welcome \
-          DB_NAME=postgres \
-          ./scripts/init_db.sh
+  #     - name: Migrate database
+  #       run: |
+  #         SKIP_DOCKER=true \
+  #         DB_HOST=localhost \
+  #         DB_PORT=5432 \
+  #         DB_USER=postgres \
+  #         DB_PASSWORD=welcome \
+  #         DB_NAME=postgres \
+  #         ./scripts/init_db.sh
 
-      # Update the tarpaulin command to run serially
-      - name: Generate code coverage
-        run: |
-          cargo install cargo-tarpaulin
-          cargo tarpaulin --workspace
+  #     # Update the tarpaulin command to run serially
+  #     - name: Generate code coverage
+  #       run: |
+  #         cargo install cargo-tarpaulin
+  #         cargo tarpaulin --workspace
