@@ -22,12 +22,9 @@ impl Ctx {
     }
 
     pub fn root_ctx() -> Self {
-        Ctx {
-            user_id: 0
-        }
+        Ctx { user_id: 0 }
     }
 }
-
 
 // Property Accessors.
 impl Ctx {

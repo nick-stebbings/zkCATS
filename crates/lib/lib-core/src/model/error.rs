@@ -8,6 +8,8 @@ use serde_with::{DisplayFromStr, serde_as};
 #[serde_as]
 #[derive(Debug, Serialize)]
 pub enum Error {
+    // -- Model
+    EntityNotFound { entity: &'static str, id: i64 },
     // -- Modules
     Store(store::Error),
 
