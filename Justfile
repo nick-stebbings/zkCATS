@@ -63,6 +63,10 @@ build:
     cargo build
 
 # Build for production (optimized)
+gen-key:
+    cargo run --example gen-key -p web_server
+
+# Build for production (optimized)
 build-release:
     cargo build --release
 

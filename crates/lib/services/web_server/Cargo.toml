@@ -18,10 +18,12 @@ lib-web = { path = "../../lib-web"}
 tokio = { workspace = true }
 axum = { workspace = true }
 
+rand = "0.9"
 derive_more = { workspace = true }
 tracing-subscriber = { workspace = true }
 tracing = { workspace = true }
 httpc-test = "0.1.10"
+base64-url = "3"
 
 [lints]
 workspace = true

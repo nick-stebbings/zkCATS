@@ -12,6 +12,10 @@ anyhow = { workspace = true }
 serde_with = { workspace = true }
 lib-util = { path = "../lib-util"}
 uuid = {version = "1", features = ["v4","fast-rng",]}
+rand = "0.9"
+hmac = "0.12"
+sha2 = "0.10"
+base64-url = "3"
 
 [dev-dependencies]
 serial_test = "3"
