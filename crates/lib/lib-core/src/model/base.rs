@@ -1,4 +1,4 @@
-use sqlx::{postgres::PgRow, FromRow};
+use sqlx::{FromRow, postgres::PgRow};
 
 use super::{Error, ModelManager, Result};
 use crate::ctx::Ctx;
@@ -12,16 +12,16 @@ where
     MC: DbBmc,
     E: for<'r> FromRow<'r, PgRow> + Unpin + Send,
 {
-  let db = mm.db();
+    let db = mm.db();
 
-  let entity = sqlx::query_as::<_, E>(&format!("SELECT * FROM {} WHERE id = $1", MC::TABLE))
-      .bind(id)
-      .fetch_optional(db)
-      .await?
-      .ok_or(Error::EntityNotFound {
-          entity: MC::TABLE,
-          id,
-      })?;
+    let entity = sqlx::query_as::<_, E>(&format!("SELECT * FROM {} WHERE id = $1", MC::TABLE))
+        .bind(id)
+        .fetch_optional(db)
+        .await?
+        .ok_or(Error::EntityNotFound {
+            entity: MC::TABLE,
+            id,
+        })?;
 
-  Ok(entity)
+    Ok(entity)
 }

@@ -1,8 +1,8 @@
 use crate::ctx::Ctx;
 
 use super::base::DbBmc;
-use super::{base, ModelManager};
 use super::error::{Error, Result};
+use super::{ModelManager, base};
 use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, types::Uuid};
 
@@ -23,7 +23,6 @@ pub struct CommunityForCreate {
 
 // region:    --- CommunityBmc
 pub struct CommunityBmc;
-
 
 impl DbBmc for CommunityBmc {
     const TABLE: &'static str = "community";

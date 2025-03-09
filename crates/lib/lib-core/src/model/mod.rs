@@ -4,8 +4,8 @@ mod base;
 mod error;
 mod store;
 
-pub mod user;
 pub mod community;
+pub mod user;
 
 pub use self::error::{Error, Result};
 use store::{Db, new_db_pool};

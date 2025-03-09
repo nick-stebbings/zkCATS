@@ -123,13 +123,31 @@ jobs:
         image: postgres:14
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: welcome
+          POSTGRES_PASSWORD: welcome  # Changed to match test job
+          POSTGRES_DB: postgres      # Changed to match test job
         ports:
           - 5432:5432
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
+      
+      # Add database migration step
+      - name: Install postgresql-client
+        run: sudo apt-get update && sudo apt-get install postgresql-client -y
+
+      - name: Migrate database
+        run: |
+          SKIP_DOCKER=true \
+          DB_HOST=localhost \
+          DB_PORT=5432 \
+          DB_USER=postgres \
+          DB_PASSWORD=welcome \
+          DB_NAME=postgres \
+          ./scripts/init_db.sh
+
+      # Update the tarpaulin command to run serially
       - name: Generate code coverage
-        run: cargo install cargo-tarpaulin && cargo tarpaulin --verbose --workspace
+        run: |
+          cargo install cargo-tarpaulin
+          RUST_TEST_THREADS=1 cargo tarpaulin --verbose --workspace
