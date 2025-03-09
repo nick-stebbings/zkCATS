@@ -11,6 +11,7 @@ tokio = { workspace = true }
 anyhow = { workspace = true }
 serde_with = { workspace = true }
 lib-util = { path = "../lib-util"}
+uuid = {version = "1", features = ["v4","fast-rng",]}
 
 [dev-dependencies]
 serial_test = "3"
