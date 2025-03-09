@@ -1,9 +1,11 @@
 // region:    --- Modules
 
-mod community;
+mod base;
 mod error;
 mod store;
-mod user;
+
+pub mod user;
+pub mod community;
 
 pub use self::error::{Error, Result};
 use store::{Db, new_db_pool};

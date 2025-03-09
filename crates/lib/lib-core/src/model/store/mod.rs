@@ -11,8 +11,10 @@ use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 pub type Db = Pool<Postgres>;
 
 pub async fn new_db_pool() -> Result<Db> {
+	let max_connections = if cfg!(test) { 1 } else { 5 };
+
     PgPoolOptions::new()
-        .max_connections(5)
+        .max_connections(max_connections)
         .connect(&core_config().DB_URL)
         .await
         .map_err(|ex| Error::FailToCreatePool(ex.to_string()))

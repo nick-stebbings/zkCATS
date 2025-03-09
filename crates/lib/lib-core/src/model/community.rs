@@ -1,6 +1,7 @@
 use crate::ctx::Ctx;
 
-use super::ModelManager;
+use super::base::DbBmc;
+use super::{base, ModelManager};
 use super::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, types::Uuid};
@@ -23,6 +24,11 @@ pub struct CommunityForCreate {
 // region:    --- CommunityBmc
 pub struct CommunityBmc;
 
+
+impl DbBmc for CommunityBmc {
+    const TABLE: &'static str = "community";
+}
+
 impl CommunityBmc {
     pub async fn create(
         _ctx: &Ctx,
@@ -40,19 +46,8 @@ impl CommunityBmc {
         Ok(id)
     }
 
-    pub async fn get(_ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<Community> {
-        let db = mm.db();
-
-        let community = sqlx::query_as::<_, Community>("SELECT * FROM community WHERE id = $1")
-            .bind(id)
-            .fetch_optional(db)
-            .await?
-            .ok_or(Error::EntityNotFound {
-                entity: "community",
-                id,
-            })?;
-
-        Ok(community)
+    pub async fn get(ctx: &Ctx, mm: &ModelManager, id: i64) -> Result<Community> {
+        base::get::<Self, _>(ctx, mm, id).await
     }
 }
 
@@ -67,8 +62,8 @@ mod tests {
     use anyhow::Result;
     use serial_test::serial;
 
-    #[serial]
     #[tokio::test]
+    #[serial]
     async fn test_create_ok() -> Result<()> {
         // S
         let mm = _dev_util::init_test().await;
@@ -106,8 +101,8 @@ mod tests {
         Ok(())
     }
 
-    #[serial]
     #[tokio::test]
+    #[serial]
     async fn test_get_ok() -> Result<()> {
         // S
         let mm = _dev_util::init_test().await;
@@ -141,8 +136,8 @@ mod tests {
         Ok(())
     }
 
-    #[serial]
     #[tokio::test]
+    #[serial]
     async fn test_get_err_not_found() -> Result<()> {
         // S
         let mm = _dev_util::init_test().await;
