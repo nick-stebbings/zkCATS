@@ -74,6 +74,10 @@ check:
 test:
     cargo test
 
+# Watch unit test
+watch-unit MODEL NAME:
+    cargo watch -q -c -x "test -p lib-core -- model::{{MODEL}}::tests::{{NAME}} --exact --quiet --nocapture"
+    
 # Run clippy for linting
 lint:
     cargo clippy -- -D warnings

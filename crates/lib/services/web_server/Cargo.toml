@@ -6,6 +6,7 @@ edition = "2024"
 [[bin]]
 name = "web_server"
 path = "src/main.rs"
+test = false
 
 [dependencies]
 
