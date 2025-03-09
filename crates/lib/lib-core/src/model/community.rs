@@ -11,17 +11,11 @@ use sqlx::{FromRow, types::Uuid};
 pub struct Community {
     pub id: i64,
     pub name: String,
-    pub members: Vec<i64>,
 }
 
 #[derive(Deserialize)]
 pub struct CommunityForCreate {
     pub name: String,
-}
-
-#[derive(Deserialize)]
-pub struct CommunityAddUser {
-    pub user_id: i64,
 }
 
 // endregion: --- Community Types
@@ -48,3 +42,45 @@ impl CommunityBmc {
 }
 
 // endregion: --- CommunityBmc
+
+// region:    --- Tests
+
+#[cfg(test)]
+mod tests {
+    use crate::_dev_util;
+
+    use super::*;
+    use anyhow::Result;
+
+    #[tokio::test]
+    async fn test_create_ok() -> Result<()> {
+        // S
+        let mm = _dev_util::init_test().await;
+        let ctx = Ctx::root_ctx();
+        let fx_name = "test_create_ok community name".to_string();
+
+        // E
+        let id = CommunityBmc::create(&ctx, &mm, CommunityForCreate { name: fx_name.clone() })
+            .await
+            .unwrap();
+
+        let (_, name,) = sqlx::query_as::<_, (i64,String,)>("SELECT * FROM community WHERE id = $1 LIMIT 1")
+            .bind(id)
+            .fetch_one(mm.db())
+            .await?;
+
+        // A
+        assert_eq!(name, fx_name);
+
+        // T
+        let count = sqlx::query("DELETE from community WHERE id =$1 returning id")
+            .bind(id)
+            .execute(mm.db())
+            .await?
+            .rows_affected();
+
+        assert_eq!(count, 1, "Didn't delete a row?");
+        Ok(())
+    }
+}
+// endregion: --- Tests

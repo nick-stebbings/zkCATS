@@ -8,6 +8,7 @@ serde = { workspace = true }
 tracing = { workspace = true }
 sqlx = { workspace = true }
 tokio = { workspace = true }
+anyhow = { workspace = true }
 serde_with = { workspace = true }
 lib-util = { path = "../lib-util"}
 
