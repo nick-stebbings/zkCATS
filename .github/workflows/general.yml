@@ -131,7 +131,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
-      
+
+      - name: Rust Cache Action
+        uses: Swatinem/rust-cache@v2
+        with:
+          # An additional cache key that is added alongside the automatic `job`-based cache key and can be used to further differentiate jobs. default: empty
+          key: sqlx-${{ env.SQLX_VERSION }}
+
+      - name: Install sqlx-cli
+        run:
+            cargo install sqlx-cli
+            --version=${{ env.SQLX_VERSION }}
+            --features ${{ env.SQLX_FEATURES }}
+            --no-default-features
+            --locked
+            # The --locked flag can be used to force Cargo to use the packaged Cargo.lock file if it is available. 
+            # This may be useful for ensuring reproducible builds, to use the exact same set of dependencies that were available when the package was published. 
+            # It may also be useful if a newer version of a dependency is published that no longer builds on your system, or has other problems
+
       # Add database migration step
       - name: Install postgresql-client
         run: sudo apt-get update && sudo apt-get install postgresql-client -y
