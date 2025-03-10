@@ -2,7 +2,7 @@
 .*
 !.gitignore
 !.github
-
+!.githooks
 _*
 # '_' in src dir, ok.
 !**/src/**/_*
