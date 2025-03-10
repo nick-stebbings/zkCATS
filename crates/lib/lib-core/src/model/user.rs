@@ -69,14 +69,17 @@ impl UserBmc {
         base::get::<Self, _>(ctx, mm, id).await
     }
 
-    pub async fn get_first_by_username(
+    pub async fn get_first_by_username<E>(
         ctx: &Ctx,
         mm: &ModelManager,
         username: &str,
-    ) -> Result<Option<User>> {
+    ) -> Result<Option<E>>
+    where
+        E: UserBy,
+    {
         let db = mm.db();
         let sql = format!("SELECT * from {} WHERE username LIKE $1", Self::TABLE);
-        let user = sqlx::query_as::<_, User>(&sql)
+        let user = sqlx::query_as::<_, E>(&sql)
             .bind(username)
             .fetch_one(db)
             .await?;
