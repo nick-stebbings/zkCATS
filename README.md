@@ -33,44 +33,52 @@ Not intended for actual taxation or production use - just a sandbox for learning
 
 ## System Architecture
 
-### Zero-Knowledge Components (Using Arkworks RS)
-- [ ] R1CS constraint system for proving contribution compliance
-- [ ] Proving key and verification key generation
-- [ ] Client-side zk-SNARK proof generation
-- [ ] On-chain verification using Solidity
+### Stage 1 - Rust Minimal Backend & Vue UI
+- [ ] API endpoints for community management
+- [ ] Database interactions using sqlx
+- [ ] zkSync interaction via web3 Rust library
+- [ ] Wallet interaction via web3.js
 
-### Smart Contracts
+### Stage 2 - Smart Contracts (draft)
 - [ ] `CatCommunity.sol` - Manages the feline community
 - [ ] `MilkFundProposal.sol` - For creating and voting on contribution models
 - [ ] `CatComplianceVerifier.sol` - Verifies zk-SNARK proofs
 
-### Rust Backend
+### Stage 3 - Zero-Knowledge Components Using Arkworks RS (draft)
 - [ ] Arkworks RS integration for zk-SNARK setup and proof generation
-- [ ] API endpoints for community management
-- [ ] Database interactions using Diesel ORM
-- [ ] zkSync interaction via web3 Rust library
+- [ ] R1CS constraint system for proving contribution compliance
+- [ ] Proving key and verification key generation
+- [ ] Client-side zk-SNARK proof generation
+- [ ] On-chain zk-Snark verification using Solidity
+
+### Stage 4 - NFKitty reputation system
+- [ ] Detecting on chain zk-SNARK generation
+- [ ] NFKitty contract development and deployment
+- [ ] NFKitty views/badges in the Agora
 
 ## Entity Relationship Diagram
 
 ```mermaid
 erDiagram
     User ||--o{ Community : "is member of"
-    User ||--o{ TaxationSystem : "proposes"
     User ||--o{ Vote : "casts"
-    User ||--o{ Comment : "creates"
-    User ||--o{ ComplianceProof : "submits"
     
-    Community ||--o{ TaxationSystem : "has"
-    Community ||--o{ Member : "contains"
+    Community ||--|| TaxationSystem : "has"
     
-    TaxationSystem ||--|{ Recipient : "allocates to"
     TaxationSystem ||--o{ Vote : "receives"
-    TaxationSystem ||--o{ Comment : "has"
-    
-    ComplianceProof }|--|| TaxationSystem : "verifies against"
-    
-    Organization ||--o{ Recipient : "receives as"
+    TaxationSystem ||--o{ PublicService : "allocates to"
 ```
+
+## Instructions (draft)
+### Running the server
+`just watch-ws`
+
+
+### Running tests
+`just test`
+
+
+# Planning:
 
 ## zk-SNARK Circuit Design (Arkworks RS)
 

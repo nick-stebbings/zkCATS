@@ -111,14 +111,6 @@ audit:
 update-deps:
     cargo update
 
-# Database migrations (if using diesel)
-migrate:
-    diesel migration run
-
-# Revert last migration (if using diesel)
-migrate-revert:
-    diesel migration revert
-
 # Combined quality checks before committing
 pre-commit: format lint test
 
