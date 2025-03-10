@@ -16,6 +16,7 @@ CREATE TABLE "app_user" (
     -- Auth
     pwd varchar(256),
     pwd_salt uuid NOT NULL DEFAULT gen_random_uuid(),
+    token_salt uuid NOT NULL DEFAULT gen_random_uuid(),
 
     community_id BIGINT REFERENCES "community" (id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
