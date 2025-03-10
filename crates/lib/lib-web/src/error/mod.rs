@@ -7,7 +7,6 @@ use std::sync::Arc;
 use tracing::debug;
 
 pub type Result<T> = core::result::Result<T, Error>;
-pub type ClientError = Box<dyn std::error::Error>; // For early dev.
 
 #[derive(Debug, Serialize, From, strum_macros::AsRefStr)]
 #[serde(tag = "type", content = "data")]
@@ -38,7 +37,7 @@ impl IntoResponse for Error {
         debug!("{:<12} - model::Error {self:?}", "INTO_RES");
 
         // Create a placeholder Axum reponse.
-        let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+        let mut response = self.client_status_and_error().0.into_response();
 
         // Insert the Error into the reponse.
         response.extensions_mut().insert(Arc::new(self));
@@ -57,3 +56,35 @@ impl core::fmt::Display for Error {
 
 impl std::error::Error for Error {}
 // endregion: --- Error Boilerplate
+
+// region:    --- ClientError
+
+impl Error {
+    pub fn client_status_and_error(&self) -> (StatusCode, ClientError) {
+        use crate::error::Error::*;
+        #[allow(unreachable_patterns)]
+        match self {
+            // -- Login
+            LoginFailUsernameNotFound
+            | LoginFailUserHasNoPwd { .. }
+            | LoginFailPasswordNotMatching { .. } => {
+                (StatusCode::FORBIDDEN, ClientError::LOGIN_FAIL)
+            }
+            // -- Fallback
+            _ => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                ClientError::SERVICE_ERROR,
+            ),
+        }
+    }
+}
+
+#[derive(Debug, strum_macros::AsRefStr)]
+#[allow(non_camel_case_types)]
+pub enum ClientError {
+    LOGIN_FAIL,
+    NO_AUTH,
+    SERVICE_ERROR,
+}
+
+// endregion: --- ClientError
