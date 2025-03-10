@@ -1,6 +1,7 @@
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use derive_more::From;
+use lib_core::model;
 use serde::Serialize;
 use std::sync::Arc;
 use tracing::debug;
@@ -11,8 +12,23 @@ pub type ClientError = Box<dyn std::error::Error>; // For early dev.
 #[derive(Debug, Serialize, From, strum_macros::AsRefStr)]
 #[serde(tag = "type", content = "data")]
 pub enum Error {
+    // -- Login
+    LoginFailUsernameNotFound,
+    LoginFailUserHasNoPwd {
+        user_id: i64,
+    },
+    LoginFailPasswordNotMatching {
+        user_id: i64,
+    },
+
+    // -- Modules
+    #[from]
+    Model(model::Error),
+
+    // -- CtxExtError
     #[from]
     CtxExt,
+    // -- Extractors
     ReqStampNotInReqExt,
 }
 
