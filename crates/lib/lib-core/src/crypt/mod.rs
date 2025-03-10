@@ -5,7 +5,7 @@ pub mod password;
 pub use error::{Error, Result};
 
 use hmac::{Hmac, Mac};
-use sha2::Sha256;
+use sha2::Sha512;
 
 // endregion: --- Modules
 
@@ -16,7 +16,7 @@ pub struct EncryptContent {
 
 // We normalise into b64 url as it is portable and a reliable character set.
 pub fn encrypt_into_b64u(key: &[u8], enc_content: &EncryptContent) -> Result<String> {
-    let mut hmac = Hmac::<Sha256>::new_from_slice(key).map_err(|_| Error::KeyFailHmac)?;
+    let mut hmac = Hmac::<Sha512>::new_from_slice(key).map_err(|_| Error::KeyFailHmac)?;
 
     let EncryptContent { content, salt } = enc_content;
 
