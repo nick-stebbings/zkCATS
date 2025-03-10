@@ -1,6 +1,8 @@
 use super::base::DbBmc;
 use super::error::{Error, Result};
 use super::{ModelManager, base};
+use crate::crypt::EncryptContent;
+use crate::crypt::password::encrypt_pwd;
 use crate::ctx::Ctx;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
@@ -81,6 +83,23 @@ impl UserBmc {
 
         Ok(Some(user))
     }
+
+    pub async fn update_pwd(ctx: &Ctx, mm: &ModelManager, clear_pw: String, id: i64) -> Result<()> {
+        let db = mm.db();
+        let user: UserForLogin = UserBmc::get(ctx, mm, id).await?;
+        let enc_pwd = encrypt_pwd(&EncryptContent {
+            content: clear_pw,
+            salt: user.pwd_salt.to_string(),
+        })?;
+
+        let _res = sqlx::query("UPDATE app_user SET pwd = $1 WHERE id = $2 RETURNING *")
+            .bind(enc_pwd)
+            .bind(id)
+            .fetch_one(db)
+            .await?;
+
+        Ok(())
+    }
 }
 
 // region:    --- Tests
@@ -90,7 +109,7 @@ mod tests {
     use super::*;
     use anyhow::{Context, Result};
 
-    use crate::_dev_util;
+    use crate::{_dev_util, config::core_config, crypt::encrypt_into_b64u};
     use serial_test::serial;
 
     #[tokio::test]
@@ -115,7 +134,7 @@ mod tests {
 
     #[tokio::test]
     #[serial]
-    async fn test_first_ok_demo2() -> Result<()> {
+    async fn test_second_ok_demo1() -> Result<()> {
         // S
         let mm = &_dev_util::init_test().await;
         let ctx = &Ctx::root_ctx();
@@ -128,6 +147,33 @@ mod tests {
 
         // A
         assert_eq!(fx_username, res.username);
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[serial]
+    async fn test_update_pw_ok_demo1() -> Result<()> {
+        // S
+        let mm = &_dev_util::init_test().await;
+        let ctx = &Ctx::root_ctx();
+        let db = mm.db();
+        let fx_id = 1000i64;
+        let res_get: UserForLogin = UserBmc::get::<UserForLogin>(ctx, mm, fx_id).await?;
+
+        let fx_clear_pw: String = "my-secure-pw".to_string();
+        let fx_enc_content = &EncryptContent {
+            content: fx_clear_pw.clone(),
+            salt: res_get.pwd_salt.into(),
+        };
+        let fx_pw_updated =
+            encrypt_into_b64u(&core_config().PWD_KEY, fx_enc_content).context("Didn't update pw");
+
+        // E
+        let res: () = UserBmc::update_pwd(ctx, mm, fx_clear_pw, fx_id).await?;
+
+        // A
+        assert_eq!(res, ());
+        // Assert not an error so update complete
         Ok(())
     }
 }
