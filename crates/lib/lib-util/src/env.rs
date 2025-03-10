@@ -1,4 +1,4 @@
-// use crate::b64::b64u_decode;
+use base64_url::decode;
 use std::env;
 use std::str::FromStr;
 
@@ -11,9 +11,9 @@ pub fn get_env_parse<T: FromStr>(name: &'static str) -> Result<T> {
     val.parse::<T>().map_err(|_| Error::WrongFormat(name))
 }
 
-// pub fn get_env_b64u_as_u8s(name: &'static str) -> Result<Vec<u8>> {
-//     b64u_decode(&get_env(name)?).map_err(|_| Error::WrongFormat(name))
-// }
+pub fn get_env_b64u_as_u8s(name: &'static str) -> Result<Vec<u8>> {
+    decode(&get_env(name)?).map_err(|_| Error::WrongFormat(name))
+}
 
 // region:    --- Error
 pub type Result<T> = core::result::Result<T, Error>;

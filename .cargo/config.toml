@@ -1,12 +1,18 @@
 [env]
+## NOTE: this is an educational project and not for production, we usually would not check in this file! 
 
 # Scope down tracing, to filter out external lib tracing.
 RUST_LOG="web_server=debug,lib_web=debug,lib_core=debug,services=debug"
 
 
-## -- Secrets
 
+## -- Secrets (for production you obviously would want to generate fresh and not check in this file)
 SERVICE_DB_URL="postgres://app_user:dev_only_pwd@localhost/app_db"
+# Generated with `just gen-key`
+SERVICE_PWD_KEY="74-eCW_KBSGH3r7R3mDMjQb7g7N9vm6JN8W6cDTzTxg3Em2qTEg-GwtG7gZPuQrGO-upmvqFtJK8KPHdlCNkGQ"
+SERVICE_TOKEN_KEY="gym1I1dUN9xuiBGVcsGkx_nJnuMc6dnZ4iRGugrzRVm-wEdr3j9iNdpVsNg74iMkbfBvlxxSZuMTTHwF1Qo9Hg"
+
+SERVICE_TOKEN_DURATION_SEC="1800"
 
 ## -- ConfigMap
 

@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 time = { workspace = true }
+base64-url = "3"
 
 [lints]
 workspace = true
