@@ -21,7 +21,7 @@ use httpc_test::new_client;
 // use lib_core::_dev_utils;
 // use lib_core::model::ModelManager;
 // use tokio::net::TcpListener;
-// use tower_cookies::CookieManagerLayer;
+use tower_cookies::CookieManagerLayer;
 use crate::config::web_config;
 use lib_core::_dev_util;
 use lib_web::routes::{routes_login, routes_static};
@@ -42,6 +42,7 @@ async fn main() -> Result<()> {
 
     let routes_all = Router::new()
         .merge(routes_login::routes(mm))
+		.layer(CookieManagerLayer::new())
         .fallback_service(routes_static::serve_dir(&web_config().WEB_FOLDER));
 
     let listener = TcpListener::bind("127.0.0.1:8080").await?;
