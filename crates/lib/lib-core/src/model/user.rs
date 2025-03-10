@@ -121,10 +121,13 @@ mod tests {
         let ctx = &Ctx::root_ctx();
         let db = mm.db();
         let fx_id = 1000;
+        let fx_username = "demo1";
 
         // E
         let res: User = UserBmc::get::<User>(ctx, mm, fx_id).await?;
 
+        // A
+        assert_eq!(fx_username, res.username);
         Ok(())
     }
 }
