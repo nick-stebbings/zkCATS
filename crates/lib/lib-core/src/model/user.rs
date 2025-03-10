@@ -55,7 +55,7 @@ impl UserBy for UserForAuth {}
 
 // endregion: --- User Types
 
-struct UserBmc;
+pub struct UserBmc;
 
 impl DbBmc for UserBmc {
     const TABLE: &'static str = "app_user";
@@ -158,22 +158,32 @@ mod tests {
         let ctx = &Ctx::root_ctx();
         let db = mm.db();
         let fx_id = 1000i64;
-        let res_get: UserForLogin = UserBmc::get::<UserForLogin>(ctx, mm, fx_id).await?;
+        let original_user: UserForLogin = UserBmc::get::<UserForLogin>(ctx, mm, fx_id).await?;
 
         let fx_clear_pw: String = "my-secure-pw".to_string();
         let fx_enc_content = &EncryptContent {
             content: fx_clear_pw.clone(),
-            salt: res_get.pwd_salt.into(),
+            salt: original_user.pwd_salt.into(),
         };
-        let fx_pw_updated =
-            encrypt_into_b64u(&core_config().PWD_KEY, fx_enc_content).context("Didn't update pw");
+        let fx_pw_updated = format!(
+            "#01#{}",
+            encrypt_into_b64u(&core_config().PWD_KEY, fx_enc_content)
+                .context("Didn't update pw")
+                .unwrap()
+        );
 
         // E
         let res: () = UserBmc::update_pwd(ctx, mm, fx_clear_pw, fx_id).await?;
 
         // A
-        assert_eq!(res, ());
         // Assert not an error so update complete
+        assert_eq!(res, ());
+
+        let res_get_2: UserForLogin = UserBmc::get::<UserForLogin>(ctx, mm, fx_id).await?;
+        if let Some(updated_pw) = res_get_2.pwd {
+            assert_eq!(updated_pw, fx_pw_updated);
+        }
+
         Ok(())
     }
 }

@@ -7,6 +7,7 @@ use tracing::info;
 
 use crate::ctx::Ctx;
 use crate::model::ModelManager;
+use crate::model::user::{User, UserBmc};
 
 type Db = Pool<Postgres>;
 
@@ -19,6 +20,7 @@ const SQL_RECREATE_DB_FILE_NAME: &str = "00-recreate-db.sql";
 const SQL_DIR: &str = "sql/dev_initial";
 
 const DEMO_PWD: &str = "welcome";
+const DEMO_CAT_PWD: &str = "cool_cat_";
 
 pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
     info!("{:<12} - init_dev_db()", "FOR-DEV-ONLY");
@@ -62,13 +64,18 @@ pub async fn init_dev_db() -> Result<(), Box<dyn std::error::Error>> {
 
     // -- Init model layer.
     let mm = ModelManager::new().await?;
-    // let ctx = Ctx::root_ctx();
-    //
-    // // -- Set demo1 pwd
-    // let demo1_user: User = UserBmc::first_by_username(&ctx, &mm, "demo1")
-    //     .await?
-    //     .unwrap();
-    // UserBmc::update_pwd(&ctx, &mm, demo1_user.id, DEMO_PWD).await?;
+    let ctx = Ctx::root_ctx();
+
+    // -- Set demo1 pwd (the Architect)
+    let demo1_user: User = UserBmc::get_first_by_username(&ctx, &mm, "demo1")
+        .await?
+        .unwrap();
+    UserBmc::update_pwd(&ctx, &mm, DEMO_PWD.to_string(), demo1_user.id).await?;
+
+    // -- Seed kitty passwords for
+    UserBmc::update_pwd(&ctx, &mm, format!("{}1", DEMO_CAT_PWD), 1001).await?;
+    UserBmc::update_pwd(&ctx, &mm, format!("{}2", DEMO_CAT_PWD), 1002).await?;
+    UserBmc::update_pwd(&ctx, &mm, format!("{}3", DEMO_CAT_PWD), 1003).await?;
     info!("{:<12} - init_dev_db - set demo1 pwd", "FOR-DEV-ONLY");
 
     Ok(())
