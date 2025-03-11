@@ -1,11 +1,13 @@
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use derive_more::From;
-use lib_core::crypt::token;
+use lib_core::crypt::{self, token};
 use lib_core::model;
 use serde::Serialize;
 use std::sync::Arc;
 use tracing::debug;
+
+use crate::middleware::mw_auth::CtxExtError;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -29,7 +31,8 @@ pub enum Error {
 
     // -- CtxExtError
     #[from]
-    CtxExt,
+    CtxExt(CtxExtError),
+
     // -- Extractors
     ReqStampNotInReqExt,
 }
@@ -58,6 +61,7 @@ impl core::fmt::Display for Error {
 }
 
 impl std::error::Error for Error {}
+
 // endregion: --- Error Boilerplate
 
 // region:    --- ClientError
