@@ -1,5 +1,5 @@
-use time::{Duration, OffsetDateTime};
 use crate::error::{Error, Result};
+use time::{Duration, OffsetDateTime};
 
 pub use time::format_description::well_known::Rfc3339;
 

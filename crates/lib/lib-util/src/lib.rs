@@ -2,8 +2,8 @@ pub mod b64;
 // region:    --- Modules
 
 pub mod env;
-pub mod time;
 mod error;
+pub mod time;
 
 pub use self::error::{Error, Result};
 
