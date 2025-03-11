@@ -4,26 +4,16 @@ pub mod config;
 mod error;
 
 pub use self::error::{Error, Result};
-use lib_core::model::ModelManager;
-use tokio::net::TcpListener;
-// use config::web_config;
-
-// use lib_web::middleware::mw_auth::{mw_ctx_require, mw_ctx_resolver};
-// use lib_web::middleware::mw_req_stamp::mw_req_stamp_resolver;
-// use lib_web::middleware::mw_res_map::mw_reponse_map;
-// use lib_web::routes::routes_static;
-
-// use crate::web::routes_login;
-
+use crate::config::web_config;
 use axum::routing::get;
 use axum::{Router, ServiceExt, middleware};
 use httpc_test::new_client;
-// use lib_core::_dev_utils;
-// use lib_core::model::ModelManager;
-// use tokio::net::TcpListener;
-use crate::config::web_config;
 use lib_core::_dev_util;
+use lib_core::model::ModelManager;
+use lib_web::handlers::handlers_login;
+use lib_web::middleware::mw_res_map::mw_reponse_map;
 use lib_web::routes::{routes_login, routes_static};
+use tokio::net::TcpListener;
 use tower_cookies::CookieManagerLayer;
 use tracing::info;
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
@@ -42,6 +32,8 @@ async fn main() -> Result<()> {
 
     let routes_all = Router::new()
         .merge(routes_login::routes(mm))
+        // .layer(middleware::map_response(mw_reponse_map))			.layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
+        // .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
         .layer(CookieManagerLayer::new())
         .fallback_service(routes_static::serve_dir(&web_config().WEB_FOLDER));
 
