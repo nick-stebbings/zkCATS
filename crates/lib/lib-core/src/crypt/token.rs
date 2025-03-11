@@ -40,11 +40,11 @@ impl FromStr for Token {
         }
         let (ident_b64u, exp_b64u, sign_b64u) = (splits[0], splits[1], splits[2]);
 
-        return Ok(Self {
+        Ok(Self {
             ident: b64_url_decode(ident_b64u).map_err(|_| Error::TokenCannotDecodeIdent)?,
             exp: b64_url_decode(ident_b64u).map_err(|_| Error::TokenCannotDecodeExp)?,
             sign_b64u: sign_b64u.to_string(),
-        });
+        })
     }
 }
 
