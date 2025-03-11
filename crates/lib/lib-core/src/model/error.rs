@@ -13,7 +13,7 @@ pub enum Error {
     // -- Model
     EntityNotFound { entity: &'static str, id: i64 },
     // -- Modules
-    Crypt(crypt::Error),
+    ModelCrypt(crypt::Error),
     Store(store::Error),
 
     // -- Externals
@@ -34,7 +34,7 @@ impl std::error::Error for Error {}
 
 impl From<crypt::Error> for Error {
     fn from(val: crypt::Error) -> Self {
-        Self::Crypt(val)
+        Self::ModelCrypt(val)
     }
 }
 
