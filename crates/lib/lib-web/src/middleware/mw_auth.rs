@@ -26,7 +26,7 @@ use serde::Serialize;
 use tower_cookies::{Cookie, Cookies};
 use tracing::debug;
 
-pub async fn mw_ctx_require(ctx: Result<Ctx>, req: Request<Body>, next: Next) -> Result<Response> {
+pub async fn mw_ctx_require(ctx: Result<CtxW>, req: Request<Body>, next: Next) -> Result<Response> {
     debug!("{:<12} - mw_ctx_require - {ctx:?}", "MIDDLEWARE");
 
     ctx?;
@@ -42,7 +42,7 @@ pub async fn mw_ctx_resolve(
 ) -> Result<Response> {
     debug!("{:<12} - mw_ctx_resolve", "MIDDLEWARE");
 
-    let ctx_ext_result = _ctx_resolve(mm, &cookies).await;
+    let ctx_ext_result: CtxExtResult = _ctx_resolve(mm, &cookies).await;
 
     if ctx_ext_result.is_err() && !matches!(ctx_ext_result, Err(CtxExtError::TokenNotInCookie)) {
         cookies.remove(Cookie::from(AUTH_TOKEN))
@@ -63,10 +63,10 @@ async fn _ctx_resolve(mm: State<ModelManager>, cookies: &Cookies) -> CtxExtResul
         .to_owned();
 
     // Parse token
-    let parsed_token: Token = Token::from_str(&token).map_err(|_| CtxExtError::TokenWrongFormat)?;
+    let token: Token = token.parse().map_err(|_| CtxExtError::TokenWrongFormat)?;
 
     // Get UserForAuth
-    let username_for_auth = &parsed_token.ident.clone();
+    let username_for_auth = &token.ident.clone();
     let ctx = Ctx::root_ctx();
     let user_for_auth: UserForAuth = UserBmc::get_first_by_username(&ctx, &mm, &username_for_auth)
         .await
@@ -74,7 +74,7 @@ async fn _ctx_resolve(mm: State<ModelManager>, cookies: &Cookies) -> CtxExtResul
         .ok_or(CtxExtError::UserNotFound)?;
 
     // Validate token
-    validate_web_token(parsed_token, &user_for_auth.token_salt.to_string())
+    validate_web_token(token, &user_for_auth.token_salt.to_string())
         .map_err(|_| CtxExtError::FailValidate)?;
 
     // Update Token

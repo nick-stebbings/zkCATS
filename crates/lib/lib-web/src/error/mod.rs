@@ -77,6 +77,10 @@ impl Error {
             | LoginFailPasswordNotMatching { .. } => {
                 (StatusCode::FORBIDDEN, ClientError::LOGIN_FAIL)
             }
+
+            // Auth
+            CtxExt(CtxExtError::TokenNotInCookie) => (StatusCode::FORBIDDEN, ClientError::NO_AUTH),
+
             // -- Fallback
             _ => (
                 StatusCode::INTERNAL_SERVER_ERROR,

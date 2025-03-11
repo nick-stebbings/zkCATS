@@ -1,5 +1,6 @@
 use crate::error::Result;
 use crate::error::{ClientError, Error};
+use crate::middleware::mw_auth::CtxW;
 use crate::middleware::mw_req_stamp::ReqStamp;
 use axum::http::{Method, Uri};
 use lib_core::ctx::Ctx;
@@ -14,7 +15,7 @@ pub async fn log_request(
     http_method: Method,
     uri: Uri,
     req_stamp: ReqStamp,
-    ctx: Option<Ctx>,
+    ctx: Option<CtxW>,
     web_error: Option<&Error>,
     client_error: Option<ClientError>,
 ) -> Result<()> {
@@ -41,7 +42,7 @@ pub async fn log_request(
         http_path: uri.to_string(),
         http_method: http_method.to_string(),
 
-        user_id: ctx.map(|c| c.user_id()),
+        user_id: ctx.map(|c| c.0.user_id()),
 
         client_error_type: client_error.map(|e| e.as_ref().to_string()),
 

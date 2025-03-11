@@ -1,3 +1,4 @@
+use super::mw_auth::CtxW;
 use crate::log::log_request;
 use crate::middleware::mw_req_stamp::ReqStamp;
 use axum::Json;
@@ -10,7 +11,7 @@ use tracing::debug;
 use uuid::Uuid;
 
 pub async fn mw_reponse_map(
-    ctx: Option<Ctx>,
+    ctx: Option<CtxW>,
     uri: Uri,
     req_method: Method,
     res: Response,

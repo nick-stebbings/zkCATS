@@ -19,7 +19,8 @@ async fn main() -> Result<()> {
 
     let hc = new_client("http://localhost:8080")?;
 
-    hc.do_get("/index.html").await?.print().await?;
+    // hc.do_get("/index.html").await?.print().await?;
+    hc.do_get("/hello").await?.print().await?;
 
     hc.do_post(
         "/api/login",
@@ -31,6 +32,7 @@ async fn main() -> Result<()> {
     .await?
     .print()
     .await?;
+    hc.do_get("/hello").await?.print().await?;
 
     Ok(())
 }
