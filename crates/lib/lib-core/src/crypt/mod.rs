@@ -1,6 +1,6 @@
 // region:    --- Modules
 
-pub mod error;
+mod error;
 pub mod password;
 pub mod token;
 pub use error::{Error, Result};

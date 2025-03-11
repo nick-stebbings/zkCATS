@@ -10,6 +10,9 @@ pub enum Error {
     TokenInvalidFormat,
     TokenCannotDecodeIdent,
     TokenCannotDecodeExp,
+    TokenSignNotMatching,
+    TokenExpNotIso,
+    TokenExpired,
 }
 
 // region:    --- Error Boilerplate

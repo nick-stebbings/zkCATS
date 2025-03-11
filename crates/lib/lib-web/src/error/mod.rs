@@ -1,6 +1,7 @@
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use derive_more::From;
+use lib_core::crypt::token;
 use lib_core::model;
 use serde::Serialize;
 use std::sync::Arc;
@@ -23,6 +24,8 @@ pub enum Error {
     // -- Modules
     #[from]
     Model(model::Error),
+    #[from]
+    Token(token::Error),
 
     // -- CtxExtError
     #[from]
