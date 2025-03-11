@@ -48,7 +48,7 @@ impl FromStr for Token {
 
         Ok(Self {
             ident: b64_url_decode(ident_b64u).map_err(|_| Error::TokenCannotDecodeIdent)?,
-            exp: b64_url_decode(ident_b64u).map_err(|_| Error::TokenCannotDecodeExp)?,
+            exp: b64_url_decode(exp_b64u).map_err(|_| Error::TokenCannotDecodeExp)?,
             sign_b64u: sign_b64u.to_string(),
         })
     }
