@@ -17,7 +17,7 @@ pub struct CoreConfig {
     // -- Crypt
     pub PWD_KEY: Vec<u8>,
     pub TOKEN_KEY: Vec<u8>,
-    pub TOKEN_DURATION_SEC: String,
+    pub TOKEN_DURATION_SEC: f64,
     // -- Web
     pub WEB_FOLDER: String,
 }
@@ -28,7 +28,7 @@ impl CoreConfig {
             DB_URL: get_env("SERVICE_DB_URL")?,
             PWD_KEY: get_env_b64u_as_u8s("SERVICE_PWD_KEY")?,
             TOKEN_KEY: get_env_b64u_as_u8s("SERVICE_TOKEN_KEY")?,
-            TOKEN_DURATION_SEC: get_env_parse("SERVICE_TOKEN_DURATION_SEC")?,
+            TOKEN_DURATION_SEC: get_env_parse::<f64>("SERVICE_TOKEN_DURATION_SEC")?,
             WEB_FOLDER: get_env("SERVICE_WEB_FOLDER")?,
         })
     }

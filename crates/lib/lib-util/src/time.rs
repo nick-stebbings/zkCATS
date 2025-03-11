@@ -1,4 +1,5 @@
 use time::{Duration, OffsetDateTime};
+use crate::error::{Error, Result};
 
 pub use time::format_description::well_known::Rfc3339;
 
@@ -18,24 +19,3 @@ pub fn now_utc_plus_sec_str(sec: f64) -> String {
 pub fn parse_utc(moment: &str) -> Result<OffsetDateTime> {
     OffsetDateTime::parse(moment, &Rfc3339).map_err(|_| Error::FailToDateParse(moment.to_string()))
 }
-
-// region:    --- Error
-
-pub type Result<T> = core::result::Result<T, Error>;
-
-#[derive(Debug)]
-pub enum Error {
-    FailToDateParse(String),
-}
-
-// region:    --- Error Boilerplate
-impl core::fmt::Display for Error {
-    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::result::Result<(), core::fmt::Error> {
-        write!(fmt, "{self:?}")
-    }
-}
-
-impl std::error::Error for Error {}
-// endregion: --- Error Boilerplate
-
-// endregion: --- Error

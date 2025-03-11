@@ -52,7 +52,7 @@ async fn api_login_hander(
     .map_err(|_| Error::LoginFailPasswordNotMatching { user_id: user.id })?;
 
     Ok(Json(json!({
-      "success": true
+        "success": true
     })))
 }
 
