@@ -68,7 +68,7 @@ async fn _ctx_resolve(mm: State<ModelManager>, cookies: &Cookies) -> CtxExtResul
     // Get UserForAuth
     let username_for_auth = &token.ident.clone();
     let ctx = Ctx::root_ctx();
-    let user_for_auth: UserForAuth = UserBmc::get_first_by_username(&ctx, &mm, &username_for_auth)
+    let user_for_auth: UserForAuth = UserBmc::get_first_by_username(&ctx, &mm, username_for_auth)
         .await
         .map_err(|ex| CtxExtError::ModelAccessError(ex.to_string()))?
         .ok_or(CtxExtError::UserNotFound)?;

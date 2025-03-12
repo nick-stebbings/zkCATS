@@ -73,7 +73,7 @@ fn _generate_token(ident: &str, duration_sec: f64, salt: &str, key: &[u8]) -> Re
     let exp = now_utc_plus_sec_str(duration_sec);
 
     // Sign first two components
-    let sign_b64u = _token_sign_into_b64u(&ident, &exp, &salt, key)?;
+    let sign_b64u = _token_sign_into_b64u(&ident, &exp, salt, key)?;
 
     Ok(Token {
         ident,
@@ -90,7 +90,7 @@ fn _validate_token_sign_and_exp(origin_token: Token, salt: &str, key: &[u8]) -> 
     } = origin_token;
     let config = core_config();
 
-    let new_sign_b64u: String = _token_sign_into_b64u(&ident, &exp, &salt, key)?;
+    let new_sign_b64u: String = _token_sign_into_b64u(&ident, &exp, salt, key)?;
     if sign_b64u != new_sign_b64u {
         return Err(Error::TokenSignNotMatching);
     }

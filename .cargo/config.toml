@@ -19,4 +19,5 @@ SERVICE_TOKEN_DURATION_SEC="1800"
 # This will be relative to Cargo.toml
 # In deployed images, probably use absolute path.
 SERVICE_WEB_FOLDER="web/"
+SERVICE_DEV_SERVER_URL="http://localhost:5173"
 MIGRATIONS_PATH="sql/dev_initial"
