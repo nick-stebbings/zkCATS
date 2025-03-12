@@ -79,7 +79,7 @@ impl Error {
             }
 
             // Auth
-            CtxExt(CtxExtError::TokenNotInCookie) => (StatusCode::FORBIDDEN, ClientError::NO_AUTH),
+            CtxExt(_) => (StatusCode::FORBIDDEN, ClientError::NO_AUTH),
 
             // -- Fallback
             _ => (
