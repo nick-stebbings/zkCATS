@@ -13,6 +13,7 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import { useAuthStore } from '../store/AuthStore'
+import { router } from '../router/index'
 
 export default defineComponent({
   name: 'Login',
@@ -23,7 +24,12 @@ export default defineComponent({
 
     const handleLogin = async () => {
       try {
-        await auth.login(username.value, password.value)
+        const loginSucceeded = await auth.login(username.value, password.value)
+        if(loginSucceeded) {
+          router.push('/bind-wallet')
+        } else {
+          console.error('login failed :>> ');
+        }
       } catch (e) {
         console.error(e)
       }
