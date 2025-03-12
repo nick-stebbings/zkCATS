@@ -42,6 +42,9 @@ dev-watch:
 init-db:
     ./scripts/init_db.sh
 
+dev-ui:
+    cd web && pnpm dev
+
 # Initialize psql terminal
 term-db:
     docker exec -it -u postgres pg psql
