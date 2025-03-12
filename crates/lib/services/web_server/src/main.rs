@@ -5,6 +5,8 @@ mod error;
 
 pub use self::error::{Error, Result};
 use crate::config::web_config;
+use axum::http::header::{self, CONTENT_TYPE};
+use axum::http::{HeaderValue, Method};
 use axum::response::Html;
 use axum::routing::get;
 use axum::{Router, ServiceExt, middleware};
@@ -17,8 +19,10 @@ use lib_web::middleware::mw_res_map::mw_reponse_map;
 use lib_web::routes::{routes_login, routes_static};
 use tokio::net::TcpListener;
 use tower_cookies::CookieManagerLayer;
+use tower_http::cors::{Any, CorsLayer};
 use tracing::info;
 use tracing_subscriber::{EnvFilter, fmt, prelude::*};
+
 // endregion: --- Modules
 
 #[tokio::main]
@@ -31,6 +35,17 @@ async fn main() -> Result<()> {
     _dev_util::init_dev().await;
 
     let mm: ModelManager = ModelManager::new().await?;
+    let cors = CorsLayer::new()
+        .allow_origin(web_config().DEV_SERVER_URL.parse::<HeaderValue>().unwrap())
+        .allow_methods([Method::GET, Method::POST, Method::OPTIONS])
+        .allow_headers([
+            header::CONTENT_TYPE,
+            header::AUTHORIZATION,
+            header::ACCEPT,
+            header::COOKIE,
+            header::SET_COOKIE,
+        ])
+        .allow_credentials(true);
 
     let test_routes = Router::new()
         .route("/hello", get(|| async { Html("Hello world") }))
@@ -39,9 +54,10 @@ async fn main() -> Result<()> {
     let routes_all = Router::new()
         .merge(test_routes)
         .merge(routes_login::routes(mm.clone()))
-        // .layer(middleware::map_response(mw_reponse_map))			.layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
+        // .layer(middleware::map_response(mw_reponse_map))
         .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
         .layer(CookieManagerLayer::new())
+        .layer(cors)
         .fallback_service(routes_static::serve_dir(&web_config().WEB_FOLDER));
 
     let listener = TcpListener::bind("127.0.0.1:8080").await?;
