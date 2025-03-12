@@ -1,15 +1,30 @@
 <!-- src/components/BindWallet.vue -->
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from 'vue'
 import { useAuthStore } from '../store/AuthStore'
+import { showError, showSuccess } from '../lib/notify'
 
-const auth = useAuthStore()
+export default defineComponent({
+  name: 'BindWallet',
+  setup() {
+    const auth = useAuthStore()
 
-const handleBind = async () => {
-  try {
-    await auth.bindAddress()
-  } catch (e) {
-    console.error(e)
+    const handleBind = async () => {
+      try {
+        await auth.bindAddress()
+        showSuccess('Wallet connected successfully')
+      } catch (e: any) {
+        if (e.message?.includes('MetaMask')) {
+          showError('Please install MetaMask to continue')
+        } else if (e.code === 4001) {
+          showError('Connection rejected. Please try again')
+        } else {
+          showError('Failed to connect wallet. Please try again')
+        }
+      }
+    }
+
+    handleBind()
   }
-}
-handleBind()
+})
 </script>

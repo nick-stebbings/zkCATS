@@ -6,9 +6,21 @@ import { useAuthStore } from '../store/AuthStore'
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/login', component: Login },
     { 
-      path: '/bind-wallet', 
+      path: '/', 
+      redirect: () => {
+        const auth = useAuthStore()
+        return auth.user ? '/bind-wallet' : '/login'
+      }
+    },
+    { 
+      path: '/login',    
+      name: 'login',
+      component: Login
+    },
+    { 
+      path: '/bind-wallet',    
+      name: 'bind-wallet', 
       component: BindWallet,
       meta: { requiresAuth: true }
     }
