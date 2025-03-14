@@ -8,6 +8,7 @@ pub mod community;
 pub mod user;
 
 pub use self::error::{Error, Result};
+use rpc_router::FromResources;
 use store::{Db, new_db_pool};
 
 // endregion: --- Modules
@@ -29,3 +30,5 @@ impl ModelManager {
         &self.db
     }
 }
+
+impl FromResources for ModelManager {}
