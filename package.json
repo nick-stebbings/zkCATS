@@ -6,16 +6,22 @@
 	"license": "MIT",
 	"repository": "https://github.com/nick-stebbings/zkCATS.git",
 	"scripts": {
-		"deploy": "hardhat run ./scripts/deploy.ts --network zkSyncTestnet"
+		"deploy": "hardhat run ./scripts/deploy.ts --network zkSyncTestnet",
+		"start-zkn": "zksync-cli dev start",
+		"stop-zkn": "zksync-cli dev stop",
+		"log-zkn": "zksync-cli dev logs",
+		"test": "hardhat test --network hardhat"
 	},
 	"devDependencies": {
 		"@matterlabs/hardhat-zksync": "^1.2.0",
 		"@matterlabs/hardhat-zksync-deploy": "^1.6.0",
 		"@matterlabs/hardhat-zksync-solc": "^1.2.6",
+		"@nomicfoundation/hardhat-chai-matchers": "^2.0.8",
 		"@nomicfoundation/hardhat-network-helpers": "^1.0.12",
 		"@nomicfoundation/hardhat-toolbox": "^5.0.0",
 		"@nomiclabs/hardhat-ethers": "^2.2.3",
 		"@openzeppelin/contracts": "^5.2.0",
+		"@types/chai": "^5.2.0",
 		"@types/mocha": "^10.0.10",
 		"@types/node": "^22.13.10",
 		"chai": "4",
@@ -25,5 +31,8 @@
 		"ts-node": "^10.9.2",
 		"typescript": "^5.8.2",
 		"zksync-ethers": "^6.16.1"
+	},
+	"dependencies": {
+		"zksync-cli": "^1.10.2"
 	}
 }

@@ -3,8 +3,8 @@ require("@matterlabs/hardhat-zksync-solc");
 require("@matterlabs/hardhat-zksync-deploy");
 require("@matterlabs/hardhat-zksync");
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-chai-matchers");
 require('dotenv').config();
-
 
 module.exports = {
   zksolc: {
@@ -24,12 +24,20 @@ module.exports = {
         ? [process.env.WALLET_PRIVATE_KEY]
         : [],
     },
+    anvilZKsync: {
+      url: "http://127.0.0.1:8011",
+      ethNetwork: "localhost", // anvil doesn't support eth node; removing this line will cause an error
+      zksync: true,
+      accounts: process.env.WALLET_PRIVATE_KEY
+        ? [process.env.WALLET_PRIVATE_KEY]
+        : [],
+    },
+    hardhat: {
+      zksync: true,
+    },
   },
   solidity: {
     version: "0.8.24"
-  },
-  hardhat: {
-    zksync: true,
   },
   paths: {
     sources: "./eth/contracts",

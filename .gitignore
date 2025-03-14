@@ -16,6 +16,7 @@ node_modules
 # -- Eth
 eth/artifacts-zk
 eth/cache-zk
+deployments-zk/
 
 # -- Rust
 target/
