@@ -10,7 +10,8 @@
 		"start-zkn": "zksync-cli dev start",
 		"stop-zkn": "zksync-cli dev stop",
 		"log-zkn": "zksync-cli dev logs",
-		"test": "hardhat test --network hardhat"
+		"test": "TESTNET_URL=\"http://127.0.0.1:8011\" hardhat test --network hardhat",
+		"test-zk": "TESTNET_URL=\"https://sepolia.era.zksync.dev\" hardhat test --network zkSyncTestnet"
 	},
 	"devDependencies": {
 		"@matterlabs/hardhat-zksync": "^1.2.0",

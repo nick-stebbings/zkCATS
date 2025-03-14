@@ -20,7 +20,7 @@ describe("CatCommunity", function () {
   let provider;
 
   beforeEach(async function () {
-    provider = new Provider("http://127.0.0.1:8011");
+    provider = new Provider(process.env.TESTNET_URL);
 
     const wallet = new Wallet(RICH_WALLET_PK, provider);
     const deployer = new Deployer(hre, wallet);
