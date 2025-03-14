@@ -1,22 +1,26 @@
 # -- Base
 .*
+# -- Git
 !.gitignore
 !.github
 !.githooks
+
 _*
 # '_' in src dir, ok.
 !**/src/**/_*
-
+node_modules
 *.lock
 *.lockb
 *.log
+
+# -- Eth
+eth/artifacts-zk
+eth/cache-zk
 
 # -- Rust
 target/
 # !Cargo.lock # Commented by default
 !.cargo/
 
-
 # Added by cargo
-
 /target
