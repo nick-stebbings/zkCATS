@@ -15,6 +15,7 @@ use lib_core::_dev_util;
 use lib_core::model::ModelManager;
 use lib_web::handlers::handlers_login;
 use lib_web::middleware::mw_auth::{self, mw_ctx_resolve};
+use lib_web::middleware::mw_req_stamp::mw_req_stamp_resolver;
 use lib_web::middleware::mw_res_map::mw_reponse_map;
 use lib_web::routes::{routes_login, routes_static};
 use tokio::net::TcpListener;
@@ -54,9 +55,10 @@ async fn main() -> Result<()> {
     let routes_all = Router::new()
         .merge(test_routes)
         .merge(routes_login::routes(mm.clone()))
-        // .layer(middleware::map_response(mw_reponse_map))
+        .layer(middleware::map_response(mw_reponse_map))
         .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolve))
         .layer(CookieManagerLayer::new())
+        .layer(middleware::from_fn(mw_req_stamp_resolver))
         .layer(cors)
         .fallback_service(routes_static::serve_dir(&web_config().WEB_FOLDER));
 

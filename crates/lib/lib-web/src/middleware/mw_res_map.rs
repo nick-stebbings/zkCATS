@@ -1,36 +1,55 @@
+use std::sync::Arc;
+
 use super::mw_auth::CtxW;
+use crate::error::{Error, Result};
+use crate::handlers::handlers_rpc::RpcInfo;
 use crate::log::log_request;
+use crate::middleware::mw_auth::CtxExtError;
 use crate::middleware::mw_req_stamp::ReqStamp;
 use axum::Json;
 use axum::http::{Method, Uri};
 use axum::response::{IntoResponse, Response};
 use lib_core::ctx::Ctx;
 use lib_util::time::now_utc;
-use serde_json::json;
+use serde_json::{json, to_value};
 use tracing::debug;
 use uuid::Uuid;
 
 pub async fn mw_reponse_map(
-    ctx: Option<CtxW>,
+    ctx: Result<CtxW>,
     uri: Uri,
     req_method: Method,
+    req_stamp: ReqStamp,
     res: Response,
 ) -> Response {
+    let ctx = ctx.map(|ctx| ctx.0).ok();
+
     debug!("{:<12} - mw_reponse_map", "RES_MAPPER");
     let uuid = Uuid::new_v4();
 
+    let rpc_info = res.extensions().get::<Arc<RpcInfo>>().map(Arc::as_ref);
+
     // -- Get the eventual response error.
-    let web_error = res.extensions().get::<crate::Error>();
+    let web_error = res.extensions().get::<Arc<Error>>().map(Arc::as_ref);
     let client_status_error = web_error.map(|se| se.client_status_and_error());
 
     // -- If client error, build the new reponse.
     let error_response = client_status_error
         .as_ref()
         .map(|(status_code, client_error)| {
+            let client_error = to_value(client_error).ok();
+            debug!("ERRORR {:?}", &client_error);
+            let message = client_error.as_ref().and_then(|v| v.get("message"));
+            let detail = client_error.as_ref().and_then(|v| v.get("detail"));
+
             let client_error_body = json!({
+                "id": rpc_info.as_ref().map(|rpc| rpc.id.clone()),
                 "error": {
-                    "type": client_error.as_ref(),
-                    "req_uuid": uuid.to_string(),
+                    "message": message, // Variant name
+                    "data": {
+                        "req_uuid": uuid.to_string(),
+                        "detail": detail
+                    },
                 }
             });
 
@@ -42,10 +61,8 @@ pub async fn mw_reponse_map(
 
     // -- Build and log the server log line.
     let client_error = client_status_error.unzip().1;
-    let req_stamp = ReqStamp {
-        uuid,
-        time_in: now_utc(),
-    };
+
+    // TODO: Need to hander if log_request fail (but should not fail request)
     let _ = crate::log::log_request(req_method, uri, req_stamp, ctx, web_error, client_error).await;
 
     debug!("\n");

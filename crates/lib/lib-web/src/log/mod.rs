@@ -15,7 +15,7 @@ pub async fn log_request(
     http_method: Method,
     uri: Uri,
     req_stamp: ReqStamp,
-    ctx: Option<CtxW>,
+    ctx: Option<Ctx>,
     web_error: Option<&Error>,
     client_error: Option<ClientError>,
 ) -> Result<()> {
@@ -42,7 +42,7 @@ pub async fn log_request(
         http_path: uri.to_string(),
         http_method: http_method.to_string(),
 
-        user_id: ctx.map(|c| c.0.user_id()),
+        user_id: ctx.map(|c| c.user_id()),
 
         client_error_type: client_error.map(|e| e.as_ref().to_string()),
 

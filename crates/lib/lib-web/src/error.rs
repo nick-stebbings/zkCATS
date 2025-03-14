@@ -33,6 +33,12 @@ pub enum Error {
     #[from]
     CtxExt(CtxExtError),
 
+    // -- RpcError (deconstructed from rpc_router::Error)
+    // Simple mapping for the RpcRequestParsingError. It will have the eventual id, method context.
+    #[from]
+    RpcRequestParsing(rpc_router::RequestParsingError),
+    RpcCallError(String),
+
     // -- Extractors
     ReqStampNotInReqExt,
 }
@@ -75,11 +81,11 @@ impl Error {
             LoginFailUsernameNotFound
             | LoginFailUserHasNoPwd { .. }
             | LoginFailPasswordNotMatching { .. } => {
-                (StatusCode::FORBIDDEN, ClientError::LOGIN_FAIL)
+                (StatusCode::UNAUTHORIZED, ClientError::LOGIN_FAIL)
             }
 
             // Auth
-            CtxExt(_) => (StatusCode::FORBIDDEN, ClientError::NO_AUTH),
+            CtxExt(_) => (StatusCode::UNAUTHORIZED, ClientError::NO_AUTH),
 
             // -- Fallback
             _ => (
@@ -90,7 +96,8 @@ impl Error {
     }
 }
 
-#[derive(Debug, strum_macros::AsRefStr)]
+#[derive(Debug, Serialize, strum_macros::AsRefStr)]
+#[serde(tag = "message", content = "detail")]
 #[allow(non_camel_case_types)]
 pub enum ClientError {
     LOGIN_FAIL,
