@@ -40,14 +40,14 @@ Not intended for actual taxation or production use - just a sandbox for learning
 - [ ] On-chain verification using Solidity
 
 ### Smart Contracts
-- [ ] `CatCommunity.sol` - Manages the feline community
-- [ ] `MilkFundProposal.sol` - For creating and voting on contribution models
+- [x] `CatCommunity.sol` - Manages the feline community
+- [x] `MilkFundProposal.sol` - For creating and voting on contribution models
 - [ ] `CatComplianceVerifier.sol` - Verifies zk-SNARK proofs
 
 ### Rust Backend
 - [ ] Arkworks RS integration for zk-SNARK setup and proof generation
-- [ ] API endpoints for community management
-- [ ] Database interactions using Diesel ORM
+- [x] API endpoints for community management
+- [x] Database interactions using SqlX
 - [ ] zkSync interaction via web3 Rust library
 
 ## Entity Relationship Diagram
