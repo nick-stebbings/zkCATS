@@ -89,8 +89,8 @@ The circuit will include:
 ## Implementation Plan for zk-SNARKs with Arkworks RS
 
 ### Phase 1: zk-SNARK Learning & Setup
-- [ ] Study Arkworks RS library components
-- [ ] Set up development environment
+- [x] Study Arkworks RS library components
+- [x] Set up development environment
 - [ ] Create basic R1CS constraint system
 - [ ] Generate proving and verification keys
 
